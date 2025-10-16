@@ -1,0 +1,15 @@
+csv/tb_role.csv
+csv/tb_country.csv
+csv/tb_alert.csv
+csv/tb_readingmode.csv
+csv/tb_servicetype.csv
+csv/tb_city.csv
+csv/tb_weather.csv
+csv/tb_employee.csv
+csv/tb_sensortype.csv
+csv/tb_param.csv
+csv/tb_paramalert.csv
+csv/tb_paramsensortype.csv
+csv/tb_sensordevice.csv
+csv/tb_serviceevent.csv
+csv/tb_readingeven.csv
