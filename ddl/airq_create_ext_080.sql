@@ -6,20 +6,21 @@ SET search_path TO stg_080;
 -- -------------------------------
 -- 2) DROP TABLE before attempting to create OLTP snapshot tables
 -- -------------------------------
-DROP TABLE IF EXISTS tb_y;
-DROP TABLE IF EXISTS tb_x;
+DROP TABLE IF EXISTS tb_certificates;
+DROP TABLE IF EXISTS tb_roletocertificate;
 
--- give a meaningful name and create Table X
-CREATE TABLE tb_x (
-    id INT NOT NULL PRIMARY KEY
-    -- the other columns here
+CREATE TABLE tb_certificates (
+    id VARCHAR(255) NOT NULL PRIMARY KEY
+    , type VARCHAR(255) NOT NULL
+    , months_of_education INT NOT NULL
 );
 
--- give a meaningful name and create Table Y
-CREATE TABLE tb_y (
-    id INT NOT NULL PRIMARY KEY
-    -- the other columns here
-	-- remember to implement foreign keys correctly
+CREATE TABLE tb_roletocertificate (
+    role_id INT NOT NULL
+    , certificate_id VARCHAR(255) NOT NULL
+    , PRIMARY KEY (role_id, certificate_id)
+    , CONSTRAINT fk_roleToCertificates_role FOREIGN KEY (role_id) REFERENCES tb_role(id)
+    , CONSTRAINT fk_roleToCertificates_certificate FOREIGN KEY (certificate_id) REFERENCES tb_certificates(id)
 );
 
 
