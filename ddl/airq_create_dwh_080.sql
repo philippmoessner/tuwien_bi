@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS ft_readingevent;
 ----------------------
 
 CREATE TABLE dim_timeday (
-    id INT NOT NULL PRIMARY KEY
+    id INT NOT NULL PRIMARY KEY,
     full_date DATE NOT NULL UNIQUE,
     day_num INT NOT NULL,
     month_num INT NOT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE ft_serviceevent (
 
     etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_ft_serviceevent_timeday FOREIGN KEY (timeday_key) REFERENCES dim_timeday(timeday_key),
+    CONSTRAINT fk_ft_serviceevent_timeday FOREIGN KEY (timeday_key) REFERENCES dim_timeday(id),
     CONSTRAINT fk_ft_serviceevent_servicetype FOREIGN KEY (servicetype_key) REFERENCES dim_servicetype(servicetype_key),
     CONSTRAINT fk_ft_serviceevent_employee FOREIGN KEY (employee_key) REFERENCES dim_employee(employee_key),
     CONSTRAINT fk_ft_serviceevent_city FOREIGN KEY (city_key) REFERENCES dim_city(city_key),
@@ -137,10 +137,9 @@ CREATE TABLE ft_readingevent (
     city_key INT NOT NULL,
     device_key INT NOT NULL,
     param_key INT NOT NULL,
-    weather_extremeness_key INT, --NOT NULL,
+    weather_extremeness_key INT,
 
     -- MEASURES
-    event_count INT NOT NULL DEFAULT 1,
     recordedvalue DECIMAL(10,4) NOT NULL,
     datavolumekb INT NOT NULL,
     dataquality INT NOT NULL,
@@ -148,9 +147,9 @@ CREATE TABLE ft_readingevent (
 
     etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_ft_readingevent_timeday FOREIGN KEY (timeday_key) REFERENCES dim_timeday(timeday_key),
+    CONSTRAINT fk_ft_readingevent_timeday FOREIGN KEY (timeday_key) REFERENCES dim_timeday(id),
     CONSTRAINT fk_ft_readingevent_city FOREIGN KEY (city_key) REFERENCES dim_city(city_key),
     CONSTRAINT fk_ft_readingevent_device FOREIGN KEY (device_key) REFERENCES dim_device(device_key),
-    CONSTRAINT fk_ft_readingevent_param FOREIGN KEY (param_key) REFERENCES dim_param(param_key),
-    CONSTRAINT fk_ft_readingevent_weather FOREIGN KEY (weather_extremeness_key) REFERENCES dim_weather_extremeness(weather_extremeness_key)
+    CONSTRAINT fk_ft_readingevent_param FOREIGN KEY (param_key) REFERENCES dim_param(param_key)
+    --CONSTRAINT fk_ft_readingevent_weather FOREIGN KEY (weather_extremeness_key) REFERENCES dim_weather_extremeness(weather_extremeness_key)
 );

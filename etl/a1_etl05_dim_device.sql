@@ -20,7 +20,7 @@ SELECT
     d.locationtype,
     d.altitude,
     d.installedat AS installdate,
-    c.cityname AS city
+    c.cityname AS city,
     co.countryname AS country
 FROM stg_080.tb_sensordevice d
 JOIN stg_080.tb_sensortype  st ON st.id = d.sensortypeid
