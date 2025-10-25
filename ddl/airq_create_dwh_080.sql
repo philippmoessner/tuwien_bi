@@ -27,13 +27,9 @@ DROP TABLE IF EXISTS ft_readingevent;
 CREATE TABLE dim_timeday (
     id INT NOT NULL PRIMARY KEY
     full_date DATE NOT NULL UNIQUE,
-    day_of_month INT NOT NULL,
+    day_num INT NOT NULL,
     month_num INT NOT NULL,
-    month_name VARCHAR(20) NOT NULL,
     year_num INT NOT NULL,
-    week_num INT NOT NULL,
-    day_of_week_num INT NOT NULL,
-    day_of_week_name VARCHAR(15) NOT NULL,
     etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -97,11 +93,11 @@ CREATE TABLE dim_param (
     etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE dim_weather_extremeness (
-    weather_extremeness_key BIGSERIAL PRIMARY KEY,
-    extremeness_level VARCHAR(64) NOT NULL,
-    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+--CREATE TABLE dim_weather_extremeness (
+--    weather_extremeness_key BIGSERIAL PRIMARY KEY,
+--    extremeness_level VARCHAR(64) NOT NULL,
+--    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+--);
 
 -----------------
 -- FACT TABLES --
@@ -141,7 +137,7 @@ CREATE TABLE ft_readingevent (
     city_key INT NOT NULL,
     device_key INT NOT NULL,
     param_key INT NOT NULL,
-    weather_extremeness_key INT NOT NULL,
+    weather_extremeness_key INT, --NOT NULL,
 
     -- MEASURES
     event_count INT NOT NULL DEFAULT 1,
