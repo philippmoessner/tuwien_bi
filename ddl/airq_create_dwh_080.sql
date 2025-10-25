@@ -6,89 +6,155 @@ SET search_path TO dwh_080;
 -- -------------------------------
 DROP TABLE IF EXISTS dim_timeday;
 DROP TABLE IF EXISTS dim_servicetype;
-DROP TABLE IF EXISTS dim_parameter;
-DROP TABLE IF EXISTS dim_technician_role_scd2;
---- and so on ...
-DROP TABLE IF EXISTS ft_name1;
-DROP TABLE IF EXISTS ft_name2;
+DROP TABLE IF EXISTS dim_employee;
+DROP TABLE IF EXISTS dim_city;
+DROP TABLE IF EXISTS dim_device;
+DROP TABLE IF EXISTS dim_param;
+DROP TABLE IF EXISTS dim_weather_extremeness;
+DROP TABLE IF EXISTS ft_serviceevent;
+DROP TABLE IF EXISTS ft_readingevent;
+
 
 -- -------------------------------
 -- 3) CREATE TABLE statements for facts and dimensions
 -- Please make sure the order in which individual statements are executed respects the FOREIGN KEY constraints
 -- -------------------------------
+
+----------------------
+-- DIMENSION TABLES --
+----------------------
+
 CREATE TABLE dim_timeday (
     id INT NOT NULL PRIMARY KEY
-    -- , ...
-	, etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    full_date DATE NOT NULL UNIQUE,
+    day_of_month INT NOT NULL,
+    month_num INT NOT NULL,
+    month_name VARCHAR(20) NOT NULL,
+    year_num INT NOT NULL,
+    week_num INT NOT NULL,
+    day_of_week_num INT NOT NULL,
+    day_of_week_name VARCHAR(15) NOT NULL,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE dim_servicetype (
-  sk_servicetype BIGSERIAL PRIMARY KEY       -- SK
-  , tb_servicetype_id INT NOT NULL           -- ID from OLTP
-  , typename VARCHAR(200) NOT NULL
-  , etl_load_timestamp TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
-  , CONSTRAINT uq_dim_servicetype_bk UNIQUE (tb_servicetype_id)
+    servicetype_key BIGSERIAL PRIMARY KEY,
+    servicetype_id INT NOT NULL UNIQUE,
+    typename VARCHAR(255) NOT NULL,
+    servicegroup VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    minlevel INT NOT NULL,
+    details VARCHAR(255) NOT NULL,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE dim_parameter (
-  sk_parameter BIGSERIAL PRIMARY KEY   -- SK
-  , tb_param_id INT NOT NULL           -- ID from OLTP
-  , paramname VARCHAR(200) NOT NULL    -- e.g., 'PM2', 'Mercury'
-  , category VARCHAR(200) NOT NULL     -- e.g. Particulate matter, Heavy Metal
-  , unit VARCHAR(50) NOT NULL          -- e.g., 'count/m3'
-  , etl_load_timestamp TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
-  , CONSTRAINT uq_dim_parameter_bk UNIQUE (tb_param_id)
+CREATE TABLE dim_employee (
+    employee_key BIGSERIAL PRIMARY KEY,
+    badgenumber VARCHAR(255) NOT NULL,
+    rolename VARCHAR(255) NOT NULL,
+    rolelevel INT NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    valid_from DATE NOT NULL,
+    valid_to DATE NULL,
+    is_active BOOLEAN NOT NULL,
+    months_of_education INT NULL,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE dim_technician_role_scd2 (
-  sk_technician_role BIGSERIAL PRIMARY KEY
-  , badgenumber VARCHAR(255) NOT NULL   -- business key
-  , rolelevel INT NOT NULL
-  , category VARCHAR(255) NOT NULL
-  , rolename               VARCHAR(255) NOT NULL
-  , effective_from         DATE NOT NULL
-  , effective_to           DATE NOT NULL  -- '9999-12-31' for current
-  , is_current             BOOLEAN NOT NULL
-  , etl_load_timestamp     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(0)
-  , CONSTRAINT ux_techrole_bk_timerange UNIQUE (badgenumber, effective_from, effective_to)
+CREATE TABLE dim_city (
+    city_key BIGSERIAL PRIMARY KEY,
+    city_id INT NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    country VARCHAR(255) NOT NULL,
+    population INT NOT NULL,
+    latitude DECIMAL(10,4) NOT NULL,
+    longitude DECIMAL(10,4) NOT NULL,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- .......
-
--- FACT 1: linked to TimeDay + Parameter + ServiceType
-CREATE TABLE ft_name1 (
-    id INT NOT NULL PRIMARY KEY                  -- keep a simple surrogate PK for the fact
-    , day_id INT NOT NULL                        -- -> dim_timeday.id
-    , sk_parameter BIGINT NOT NULL               -- -> dim_parameter.sk_parameter
-    , sk_servicetype BIGINT NOT NULL             -- -> dim_servicetype.sk_servicetype
-    -- (optional) add your measures here, e.g.: measure_value NUMERIC(18,2) NOT NULL,
-    , etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-    , CONSTRAINT fk_name1_timeday FOREIGN KEY (day_id) REFERENCES dim_timeday(id)
-    , CONSTRAINT fk_name1_parameter FOREIGN KEY (sk_parameter) REFERENCES dim_parameter(sk_parameter)
-    , CONSTRAINT fk_name1_servicetype FOREIGN KEY (sk_servicetype) REFERENCES dim_servicetype(sk_servicetype)
+CREATE TABLE dim_device (
+    device_key BIGSERIAL PRIMARY KEY,
+    device_id INT NOT NULL UNIQUE,
+    sensortype VARCHAR(255) NOT NULL,
+    manufacturer VARCHAR(255) NOT NULL,
+    technology VARCHAR(255) NOT NULL,
+    locationname VARCHAR(255) NOT NULL,
+    locationtype VARCHAR(255) NOT NULL,
+    altitude INT NOT NULL,
+    installdate DATE NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    country VARCHAR(255) NOT NULL,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- helpful indexes for join performance (optional but recommended)
-CREATE INDEX ix_ft_name1_day           ON ft_name1(day_id);
-CREATE INDEX ix_ft_name1_parameter     ON ft_name1(sk_parameter);
-CREATE INDEX ix_ft_name1_servicetype   ON ft_name1(sk_servicetype);
-
--- FACT 2: linked to TimeDay + Parameter + Technician Role (SCD2)
-CREATE TABLE ft_name2 (
-    id INT NOT NULL PRIMARY KEY                  -- keep a simple surrogate PK for the fact
-    , day_id INT NOT NULL                        -- -> dim_timeday.id
-    , sk_parameter BIGINT NOT NULL               -- -> dim_parameter.sk_parameter
-    , sk_technician_role BIGINT NOT NULL         -- -> dim_technician_role_scd2.sk_technician_role
-    -- (optional) add your measures here
-    , etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-    , CONSTRAINT fk_name2_day FOREIGN KEY (day_id) REFERENCES dim_timeday(id)
-    , CONSTRAINT fk_name2_parameter FOREIGN KEY (sk_parameter) REFERENCES dim_parameter(sk_parameter)
-    , CONSTRAINT fk_name2_techrole FOREIGN KEY (sk_technician_role) REFERENCES dim_technician_role_scd2(sk_technician_role)
+CREATE TABLE dim_param (
+    param_key BIGSERIAL PRIMARY KEY,
+    param_id INT NOT NULL UNIQUE,
+    paramname VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    purpose VARCHAR(50) NOT NULL,
+    unit VARCHAR(255) NOT NULL,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- helpful indexes for join performance (optional but recommended)
-CREATE INDEX ix_ft_name2_day           ON ft_name2(day_id);
-CREATE INDEX ix_ft_name2_parameter     ON ft_name2(sk_parameter);
-CREATE INDEX ix_ft_name2_techrole      ON ft_name2(sk_technician_role);
+CREATE TABLE dim_weather_extremeness (
+    weather_extremeness_key BIGSERIAL PRIMARY KEY,
+    extremeness_level VARCHAR(64) NOT NULL,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
+-----------------
+-- FACT TABLES --
+-----------------
 
+CREATE TABLE ft_serviceevent (
+    id BIGSERIAL PRIMARY KEY,
+    
+    -- FOREIGN KEY TO DIM TABLES
+    timeday_key INT NOT NULL,
+    servicetype_key INT NOT NULL,
+    employee_key BIGINT NOT NULL,
+    city_key INT NOT NULL,
+    device_key INT NOT NULL,
+
+    -- MEASURES
+    service_cost INT NOT NULL,
+    service_duration_minutes INT NOT NULL,
+    service_quality INT NOT NULL,
+    qualified_work INT NOT NULL,
+    overqualified_work INT NOT NULL,
+
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_ft_serviceevent_timeday FOREIGN KEY (timeday_key) REFERENCES dim_timeday(timeday_key),
+    CONSTRAINT fk_ft_serviceevent_servicetype FOREIGN KEY (servicetype_key) REFERENCES dim_servicetype(servicetype_key),
+    CONSTRAINT fk_ft_serviceevent_employee FOREIGN KEY (employee_key) REFERENCES dim_employee(employee_key),
+    CONSTRAINT fk_ft_serviceevent_city FOREIGN KEY (city_key) REFERENCES dim_city(city_key),
+    CONSTRAINT fk_ft_serviceevent_device FOREIGN KEY (device_key) REFERENCES dim_device(device_key)
+);
+
+CREATE TABLE ft_readingevent (
+    id BIGSERIAL PRIMARY KEY,
+
+    -- FOREIGN KEY TO DIM TABLES
+    timeday_key INT NOT NULL,
+    city_key INT NOT NULL,
+    device_key INT NOT NULL,
+    param_key INT NOT NULL,
+    weather_extremeness_key INT NOT NULL,
+
+    -- MEASURES
+    event_count INT NOT NULL DEFAULT 1,
+    recordedvalue DECIMAL(10,4) NOT NULL,
+    datavolumekb INT NOT NULL,
+    dataquality INT NOT NULL,
+    alertlevel INT NOT NULL,
+
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_ft_readingevent_timeday FOREIGN KEY (timeday_key) REFERENCES dim_timeday(timeday_key),
+    CONSTRAINT fk_ft_readingevent_city FOREIGN KEY (city_key) REFERENCES dim_city(city_key),
+    CONSTRAINT fk_ft_readingevent_device FOREIGN KEY (device_key) REFERENCES dim_device(device_key),
+    CONSTRAINT fk_ft_readingevent_param FOREIGN KEY (param_key) REFERENCES dim_param(param_key),
+    CONSTRAINT fk_ft_readingevent_weather FOREIGN KEY (weather_extremeness_key) REFERENCES dim_weather_extremeness(weather_extremeness_key)
+);
