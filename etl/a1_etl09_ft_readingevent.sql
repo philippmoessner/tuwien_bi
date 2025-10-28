@@ -43,7 +43,7 @@ JOIN dwh_080.dim_param dp ON dp.param_id = r.paramid
 LEFT JOIN (
     SELECT
         r2.id AS reading_id,
-        COALESCE(MAX(pa.alertid % 100), 0) AS alertlevel
+        COALESCE(MAX(MOD(pa.alertid, 100)), 0) AS alertlevel
     FROM stg_080.tb_readingevent r2
     LEFT JOIN stg_080.tb_paramalert pa
            ON pa.paramid = r2.paramid
