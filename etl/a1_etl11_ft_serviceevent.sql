@@ -33,7 +33,7 @@ JOIN dwh_080.dim_servicetype dst ON dst.servicetype_id = se.servicetypeid
 JOIN dwh_080.dim_device dd ON dd.device_id = se.sensordevid
 JOIN dwh_080.dim_city dc ON dc.city_id = c.id
 JOIN stg_080.tb_employee e ON e.id = se.employeeid
-JOIN dwh_080.dim_employee de ON de.badgenumber = e.badgenumber;
+JOIN dwh_080.dim_employee de ON de.badgenumber = e.badgenumber AND se.servicedat BETWEEN de.valid_from AND COALESCE(de.valid_to, DATE '2999-12-31');
 
 -- 3) Refresh stats (optional but recommended)
 ANALYZE ft_serviceevent;
