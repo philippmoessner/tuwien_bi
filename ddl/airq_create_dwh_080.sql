@@ -47,6 +47,7 @@ CREATE TABLE dim_servicetype (
 CREATE TABLE dim_employee (
     employee_key BIGSERIAL PRIMARY KEY,
     badgenumber VARCHAR(255) NOT NULL,
+    role_id INT NOT NULL,
     rolename VARCHAR(255) NOT NULL,
     rolelevel INT NOT NULL,
     category VARCHAR(255) NOT NULL,

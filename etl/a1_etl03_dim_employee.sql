@@ -9,7 +9,7 @@ SET search_path TO dwh_080, stg_080;
 TRUNCATE TABLE dim_employee RESTART IDENTITY CASCADE;
 
 INSERT INTO dwh_080.dim_employee (
-  badgenumber, rolename, rolelevel, category, valid_from, valid_to, is_active, months_of_education
+  badgenumber, role_id, rolename, rolelevel, category, valid_from, valid_to, is_active, months_of_education
 )
 WITH role_edu AS (
   SELECT
@@ -21,6 +21,7 @@ WITH role_edu AS (
 )
 SELECT
   e.badgenumber,
+  e.roleid,
   r.rolename,
   r.rolelevel,
   r.category,
