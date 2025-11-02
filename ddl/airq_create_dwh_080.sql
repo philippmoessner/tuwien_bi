@@ -10,7 +10,10 @@ DROP TABLE IF EXISTS dim_employee;
 DROP TABLE IF EXISTS dim_city;
 DROP TABLE IF EXISTS dim_device;
 DROP TABLE IF EXISTS dim_param;
+DROP TABLE IF EXISTS dim_reading_mode;
 DROP TABLE IF EXISTS dim_weather_extremeness;
+DROP TABLE IF EXISTS dim_power_plan;
+-- DROP TABLE IF EXISTS dim_weather_extremeness;
 DROP TABLE IF EXISTS ft_serviceevent;
 DROP TABLE IF EXISTS ft_readingevent;
 
@@ -23,6 +26,33 @@ DROP TABLE IF EXISTS ft_readingevent;
 ----------------------
 -- DIMENSION TABLES --
 ----------------------
+
+CREATE TABLE dim_reading_mode (
+    reading_mode_id BIGSERIAL PRIMARY KEY,
+    modename VARCHAR(255) NOT NULL,
+    latency INT NOT NULL,
+    validfrom DATE NOT NULL,
+    validto DATE NULL,
+    details VARCHAR(255) NOT NULL,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE dim_weather_extremeness (
+    id BIGSERIAL PRIMARY KEY,
+    extremeness_flag VARCHAR(50) NOT NULL UNIQUE,
+    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE dim_power_plan (
+    power_plan_id      BIGSERIAL PRIMARY KEY,
+    power_plan_nk       INT NOT NULL UNIQUE,  
+    provider            VARCHAR(255) NOT NULL,
+    plan_name           VARCHAR(255) NOT NULL,
+    tier                VARCHAR(50) NOT NULL,
+    price_index         DECIMAL(6,2) NOT NULL,
+    notes               VARCHAR(255),
+    etl_load_timestamp  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE dim_timeday (
     id INT NOT NULL PRIMARY KEY,
@@ -94,12 +124,6 @@ CREATE TABLE dim_param (
     etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
---CREATE TABLE dim_weather_extremeness (
---    weather_extremeness_key BIGSERIAL PRIMARY KEY,
---    extremeness_level VARCHAR(64) NOT NULL,
---    etl_load_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
---);
-
 -----------------
 -- FACT TABLES --
 -----------------
@@ -113,6 +137,7 @@ CREATE TABLE ft_serviceevent (
     employee_key BIGINT NOT NULL,
     city_key INT NOT NULL,
     device_key INT NOT NULL,
+    power_plan_id INT NULL,
 
     -- MEASURES
     service_cost INT NOT NULL,
@@ -127,7 +152,8 @@ CREATE TABLE ft_serviceevent (
     CONSTRAINT fk_ft_serviceevent_servicetype FOREIGN KEY (servicetype_key) REFERENCES dim_servicetype(servicetype_key),
     CONSTRAINT fk_ft_serviceevent_employee FOREIGN KEY (employee_key) REFERENCES dim_employee(employee_key),
     CONSTRAINT fk_ft_serviceevent_city FOREIGN KEY (city_key) REFERENCES dim_city(city_key),
-    CONSTRAINT fk_ft_serviceevent_device FOREIGN KEY (device_key) REFERENCES dim_device(device_key)
+    CONSTRAINT fk_ft_serviceevent_device FOREIGN KEY (device_key) REFERENCES dim_device(device_key), 
+    CONSTRAINT fk_ft_serviceevent_powerplan FOREIGN KEY (power_plan_id) REFERENCES dim_power_plan(power_plan_id)
 );
 
 CREATE TABLE ft_readingevent (
@@ -138,7 +164,9 @@ CREATE TABLE ft_readingevent (
     city_key INT NOT NULL,
     device_key INT NOT NULL,
     param_key INT NOT NULL,
-    weather_extremeness_key INT,
+    reading_mode_id INT NULL,        
+    weather_extremeness_id INT NULL, 
+    power_plan_id INT NULL,   
 
     -- MEASURES
     recordedvalue DECIMAL(10,4) NOT NULL,
@@ -151,6 +179,8 @@ CREATE TABLE ft_readingevent (
     CONSTRAINT fk_ft_readingevent_timeday FOREIGN KEY (timeday_key) REFERENCES dim_timeday(id),
     CONSTRAINT fk_ft_readingevent_city FOREIGN KEY (city_key) REFERENCES dim_city(city_key),
     CONSTRAINT fk_ft_readingevent_device FOREIGN KEY (device_key) REFERENCES dim_device(device_key),
-    CONSTRAINT fk_ft_readingevent_param FOREIGN KEY (param_key) REFERENCES dim_param(param_key)
-    --CONSTRAINT fk_ft_readingevent_weather FOREIGN KEY (weather_extremeness_key) REFERENCES dim_weather_extremeness(weather_extremeness_key)
+    CONSTRAINT fk_ft_readingevent_param FOREIGN KEY (param_key) REFERENCES dim_param(param_key),
+        CONSTRAINT fk_ft_readingevent_readingmode FOREIGN KEY (reading_mode_id) REFERENCES dim_reading_mode(reading_mode_id), 
+    CONSTRAINT fk_ft_readingevent_weather FOREIGN KEY (weather_extremeness_id) REFERENCES dim_weather_extremeness(id),            
+    CONSTRAINT fk_ft_readingevent_powerplan FOREIGN KEY (power_plan_id) REFERENCES dim_power_plan(power_plan_id)                
 );

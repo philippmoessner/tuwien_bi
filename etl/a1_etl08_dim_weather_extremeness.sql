@@ -1,10 +1,15 @@
--- Make A1 dwh_xxx, stg_xxx schemas the default for this session
-SET search_path TO dwh_080, stg_080;
+SET search_path TO dwh_080;
 
--- =======================================
--- Load dim_weather_extremeness
--- =======================================
-
--- Step 1: Truncate target table
 TRUNCATE TABLE dim_weather_extremeness RESTART IDENTITY CASCADE;
 
+INSERT INTO dim_weather_extremeness (extremeness_flag)
+VALUES
+    ('Normal'),
+    ('Heatwave'),
+    ('ColdSnap'),
+    ('HeavyRain'),
+    ('HighWind')
+ON CONFLICT (extremeness_flag) DO NOTHING;
+
+-- [ADDED] Analyze for statistics
+ANALYZE dim_weather_extremeness;
