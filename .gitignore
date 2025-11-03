@@ -12,4 +12,4 @@ csv/tb_paramalert.csv
 csv/tb_paramsensortype.csv
 csv/tb_sensordevice.csv
 csv/tb_serviceevent.csv
-csv/tb_readingeven.csv
+csv/tb_readingevent.csv
