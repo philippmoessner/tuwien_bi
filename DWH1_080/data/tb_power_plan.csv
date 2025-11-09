@@ -1,0 +1,6 @@
+id,provider,plan_name,tier,price_index,notes
+1,Bosch Energy,Low Power,C,0.85,Energy saving mode for remote devices
+2,Bosch Energy,Standard,B,1.00,Default operation balance
+3,Bosch Energy,High Performance,A,1.20,Full-speed sampling for critical sensors
+4,Bosch Energy,Diagnostic,B,1.10,Temporary plan during maintenance
+5,Bosch Energy,Experimental,A,1.30,High-frequency test mode
