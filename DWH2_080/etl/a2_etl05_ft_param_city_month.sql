@@ -115,7 +115,7 @@ monthly_measures AS (
         r.month_key,
         r.city_key,
         r.param_key,
-        COUNT(DISTINCT r.sensordevid, r.day_date) AS reading_events_count,
+        COUNT(DISTINCT (r.sensordevid, r.day_date)) AS reading_events_count,
         COUNT(DISTINCT r.sensordevid) AS devices_reporting_count,
         AVG(r.recordedvalue) AS recordedvalue_avg,
         percentile_cont(0.95) WITHIN GROUP (ORDER BY r.recordedvalue)
