@@ -1,2 +1,2 @@
-Student A:
-Student B:
+Student A: Philipp Moeßner
+Student B: Vasili Savin
