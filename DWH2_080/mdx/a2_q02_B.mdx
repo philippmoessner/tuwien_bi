@@ -1,0 +1,26 @@
+%%mdx
+-- 2. For parameter O3, show Missing Days in Austria by City × Month for Q1 of 2023.
+-- Return Austrian Cities on rows and the first three months of 2023 (Jan–Mar) on columns.
+
+SELECT
+  {
+    FILTER(
+      Descendants(
+        [dim_timemonth].[Time].[year_num].&[2023],
+        [dim_timemonth].[Time].[month_name]
+      ),
+      [dim_timemonth].[Time].CurrentMember.Name = "Jan"
+        OR [dim_timemonth].[Time].CurrentMember.Name = "Feb"
+        OR [dim_timemonth].[Time].CurrentMember.Name = "Mar"
+    )
+  } ON COLUMNS,
+  NON EMPTY
+    Descendants(
+      [dim_city].[Geo].[country_name].&[Austria],
+      [dim_city].[Geo].[city_name]
+    ) ON ROWS
+FROM [AirQ Cube]
+WHERE (
+  [Measures].[Missing Days],
+  [dim_param].[Param].[param_name].&[O3]
+)
