@@ -1,0 +1,104 @@
+variable,description,unit,scale_type
+id,Airbnb's unique identifier for the listing,string-id,nominal
+listing_url,URL of the listing page on Airbnb.,string,nominal
+scrape_id,"Inside Airbnb ""Scrape"" this was part of",string-id,nominal
+last_scraped,"UTC. The date and time this listing was ""scraped"".",date,interval
+source,Indicates how the listing was discovered during data collection.,string,nominal
+source,Indicates how the listing was discovered during data collection.,string,nominal
+name,Name of the listing,string,nominal
+description,Detailed description of the listing,string,nominal
+neighborhood_overview,Host's description of the neighbourhood,string,nominal
+picture_url,URL to the Airbnb hosted regular sized image for the listing,string,nominal
+host_id,Airbnb's unique identifier for the host/user,string-id,nominal
+host_url,The Airbnb page for the host,string,nominal
+host_name,Name of the host. Usually just the first name(s).,string,nominal
+host_since,The date the host/user was created. For hosts that are Airbnb guests this could be the date they registered as a guest.,date,interval
+host_location,The host's self reported location,string,nominal
+host_about,Description about the host,string,nominal
+host_response_time,Approximate time the host takes to respond to messages.,string,nominal
+host_response_rate,Percentage of messages the host responds to.,percent,ratio
+host_acceptance_rate,That rate at which a host accepts booking requests.,percent,ratio
+host_is_superhost,Whether the host has earned Superhost status.,boolean,nominal
+host_thumbnail_url,URL to the host's profile thumbnail image.,string,nominal
+host_picture_url,URL to the host's profile picture.,string,nominal
+host_neighbourhood,Neighbourhood where the host is located.,string,nominal
+host_listings_count,The number of listings the host has (per Airbnb unknown calculations),count,ratio
+host_total_listings_count,The number of listings the host has (per Airbnb unknown calculations),count,ratio
+host_verifications,Verification methods used by the host.,string-list,nominal
+host_has_profile_pic,Whether the host has uploaded a profile picture.,boolean,nominal
+host_identity_verified,Whether the host's identity has been verified.,boolean,nominal
+neighbourhood,Neighbourhood name reported by the host.,string,nominal
+neighbourhood_cleansed,The neighbourhood as geocoded using the latitude and longitude against neighborhoods as defined by open or public digital shapefiles.,string,nominal
+neighbourhood_group_cleansed,The neighbourhood group as geocoded using the latitude and longitude against neighborhoods as defined by open or public digital shapefiles.,string,nominal
+latitude,Uses the World Geodetic System (WGS84) projection for latitude and longitude.,degree,ratio
+longitude,Uses the World Geodetic System (WGS84) projection for latitude and longitude.,degree,ratio
+property_type,Self selected property type. Hotels and Bed and Breakfasts are described as such by their hosts in this field,string,nominal
+room_type,"[Entire home/apt|Private room|Shared room|Hotel]
+
+All homes are grouped into the following three room types:
+
+Entire place
+Private room
+Shared room
+Entire place
+Entire places are best if you're seeking a home away from home. With an entire place, you'll have the whole space to yourself. This usually includes a bedroom, a bathroom, a kitchen, and a separate, dedicated entrance. Hosts should note in the description if they'll be on the property or not (ex: ""Host occupies first floor of the home""), and provide further details on the listing.
+
+Private rooms
+Private rooms are great for when you prefer a little privacy, and still value a local connection. When you book a private room, you'll have your own private room for sleeping and may share some spaces with others. You might need to walk through indoor spaces that another host or guest may occupy to get to your room.
+
+Shared rooms
+Shared rooms are for when you don't mind sharing a space with others. When you book a shared room, you'll be sleeping in a space that is shared with others and share the entire space with other people. Shared rooms are popular among flexible travelers looking for new friends and budget-friendly stays.",string,nominal
+accommodates,The maximum capacity of the listing,count,ratio
+bathrooms,The number of bathrooms in the listing,count,ratio
+bathrooms_text,"The number of bathrooms in the listing. 
+On the Airbnb web-site, the bathrooms field has evolved from a number to a textual description. For older scrapes, bathrooms is used.",text,nominal
+bedrooms,The number of bedrooms,count,ratio
+beds,The number of bed(s),count,ratio
+amenities,List of amenities provided in the listing.,string-list,nominal
+price,"daily price in local currency.
+NOTE: the $ sign is a technical artifact of the export, please ignore it",EUR,ratio
+minimum_nights,minimum number of night stay for the listing (calendar rules may be different),night,ratio
+maximum_nights,maximum number of night stay for the listing (calendar rules may be different),night,ratio
+minimum_minimum_nights,the smallest minimum_night value from the calender (looking 365 nights in the future),night,ratio
+maximum_minimum_nights,the largest minimum_night value from the calender (looking 365 nights in the future),night,ratio
+minimum_maximum_nights,the smallest maximum_night value from the calender (looking 365 nights in the future),night,ratio
+maximum_maximum_nights,the largest maximum_night value from the calender (looking 365 nights in the future),night,ratio
+minimum_nights_avg_ntm,the average minimum_night value from the calender (looking 365 nights in the future),night,ratio
+maximum_nights_avg_ntm,the average maximum_night value from the calender (looking 365 nights in the future),night,ratio
+calendar_updated,Timestamp when the calendar was last updated.,date,interval
+has_availability,[t=true; f=false],boolean,nominal
+availability_30,avaliability_x. The availability of the listing x days in the future as determined by the calendar. Note a listing may not be available because it has been booked by a guest or blocked by the host.,day,ratio
+availability_60,avaliability_x. The availability of the listing x days in the future as determined by the calendar. Note a listing may not be available because it has been booked by a guest or blocked by the host.,day,ratio
+availability_90,avaliability_x. The availability of the listing x days in the future as determined by the calendar. Note a listing may not be available because it has been booked by a guest or blocked by the host.,day,ratio
+availability_365,avaliability_x. The availability of the listing x days in the future as determined by the calendar. Note a listing may not be available because it has been booked by a guest or blocked by the host.,day,ratio
+calendar_last_scraped,Date when the calendar information was collected.,date,interval
+number_of_reviews,The number of reviews the listing has,count,ratio
+number_of_reviews_ltm,The number of reviews the listing has (in the last 12 months),count,ratio
+number_of_reviews_l30d,The number of reviews the listing has (in the last 30 days),count,ratio
+availability_eoy,Number of available days until the end of the year.,day,ratio
+number_of_reviews_ly,Number of reviews received in the last 365 days; indicator of recent demand.,count,ratio
+estimated_occupancy_l365d,Estimated occupancy rate over the last 365 days.,percent,ratio
+estimated_revenue_l365d,Estimated revenue earned over the last 365 days.,EUR,ratio
+first_review,The date of the first/oldest review,date,interval
+last_review,The date of the last/newest review,date,interval
+review_scores_rating,Overall guest rating score for the listing.,rating-1-5,interval
+review_scores_accuracy,Guest rating of listing description accuracy.,rating-1-5,interval
+review_scores_cleanliness,Guest rating of cleanliness of the listing.,rating-1-5,interval
+review_scores_checkin,Guest rating of check-in experience.,rating-1-5,interval
+review_scores_communication,Guest rating of communication with the host.,rating-1-5,interval
+review_scores_location,Guest rating of location of the listing.,rating-1-5,interval
+review_scores_value,Guest rating of value for money.,rating-1-5,interval
+license,The licence/permit/registration number,string,nominal
+instant_bookable,[t=true; f=false]. Whether the guest can automatically book the listing without the host requiring to accept their booking request. An indicator of a commercial listing.,boolean,nominal
+calculated_host_listings_count,"The number of listings the host has in the current scrape, in the city/region geography.",count,ratio
+calculated_host_listings_count_entire_homes,"The number of Entire home/apt listings the host has in the current scrape, in the city/region geography",count,ratio
+calculated_host_listings_count_private_rooms,"The number of Private room listings the host has in the current scrape, in the city/region geography",count,ratio
+calculated_host_listings_count_shared_rooms,"The number of Shared room listings the host has in the current scrape, in the city/region geography",count,ratio
+reviews_per_month,"The average number of reviews per month the listing has over the lifetime of the listing.
+
+Psuedocoe/~SQL:
+
+IF scrape_date - first_review <= 30 THEN number_of_reviews
+ELSE number_of_reviews / ((scrape_date - first_review + 1) / (365/12))
+
+",count-per-month,ratio
